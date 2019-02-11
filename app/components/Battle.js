@@ -1,6 +1,6 @@
-const React = require('react');
-const Link = require('react-router-dom').Link;
-const PlayerPreview = require('./PlayerPreview');
+import React from 'react';
+import { Link } from 'react-router-dom';
+import PlayerPreview from './PlayerPreview';
 
 
 class PlayerInput extends React.Component {
@@ -16,13 +16,9 @@ class PlayerInput extends React.Component {
 	}
 
 	handleChange(event) {
-		let value = event.target.value;
+		const value = event.target.value;
 
-		this.setState(() => {
-			return  {
-				username: value
-			}
-		})
+		this.setState(() => ({ username: value }));
 	}
 
 	handleSubmit(event) {
@@ -35,24 +31,25 @@ class PlayerInput extends React.Component {
 	}
 
 	render() {
+		const { username } = this.state;
+		const { label } = this.props;
+
 		return (
 			<form className='column' onSubmit={this.handleSubmit}>
-				<label className='header' htmlFor='username'>
-					{this.props.label}
-				</label>
+				<label className='header' htmlFor='username'>{label}</label>
 				<input 
 					id='username' 
 					placeholder='github username' 
 					type='text' 
 					autoComplete='off' 
-					value={this.state.username} 
+					value={username} 
 					onChange={this.handleChange}
 				/>
 				<button
 					className='button'
 					type='submit'
-					disabled={!this.state.username}>
-						submit
+					disabled={!username}>
+						Submit
 				</button>
 			</form>
 		)
@@ -71,48 +68,39 @@ class Battle extends React.Component {
 		}
 
 		this.handleSubmit = this.handleSubmit.bind(this);
-		this.handleReset  = this.handleReset.bind(this);
 	}
 
 	handleSubmit(id, username) {
-		this.setState(() => {
-			let newState = {};
-			newState[id + 'Name'] = username;
-			newState[id + 'Image'] = 'https://github.com/' + username + '.png?size=200';
-			return newState;
-		});
+		this.setState(() => ({
+			[id + 'Name']: username,
+			[id + 'Image']: `https://github.com/${username}.png?size=200`
+		}));
 	}
 
 	handleReset(id) {
-		this.setState(() => {
-			let newState = {};
-			newState[id + 'Name'] = '';
-			newState[id + 'Image'] = '';
-			return newState;
-		});
+		this.setState(() => ({
+			[id + 'Name']: '',
+			[id + 'Image']: null
+		}));
 	}
 
 	render() {
-		let match = this.props.match;
-
-		let playerOneName = this.state.playerOneName;
-		let playerTwoName = this.state.playerTwoName;
-		let playerOneImage = this.state.playerOneImage;
-		let playerTwoImage = this.state.playerTwoImage;
+		const { match } = this.props;
+		const { playerOneName, playerTwoName, playerOneImage, playerTwoImage } = this.state;
 
 		return (
 			<div>
 				<div className='row'>
-					{!playerOneName && <PlayerInput   id='playerOne' label='Player One' onSubmit={this.handleSubmit} />}
+					{!playerOneName && <PlayerInput id='playerOne' label='Player One' onSubmit={this.handleSubmit} />}
 					{playerOneImage && 
 						<PlayerPreview avatar={playerOneImage} username={playerOneName}>
-							<button className='reset' onClick={this.handleReset.bind(null, 'playerOne')}>Reset</button>
+							<button className='reset' onClick={() => this.handleReset('playerOne')}>Reset</button>
 						</PlayerPreview>
 					}
-					{!playerTwoName && <PlayerInput   id='playerTwo' label='Player Two' onSubmit={this.handleSubmit} />}
+					{!playerTwoName && <PlayerInput id='playerTwo' label='Player Two' onSubmit={this.handleSubmit} />}
 					{playerTwoImage && 
 						<PlayerPreview avatar={playerTwoImage} username={playerTwoName}>
-							<button className='reset' onClick={this.handleReset.bind(null, 'playerTwo')}>Reset</button>
+							<button className='reset' onClick={() => this.handleReset('playerTwo')}>Reset</button>
 						</PlayerPreview>
 					}
 				</div>
@@ -121,7 +109,7 @@ class Battle extends React.Component {
 						className='button' 
 						to={{
 							pathname: match.url + '/results',
-							search: '?playerOneName=' + playerOneName + '&playerTwoName=' + playerTwoName
+							search: `?playerOneName=${playerOneName}&playerTwoName=${playerTwoName}`
 						}}>
 							Battle
 					</Link>
@@ -131,7 +119,6 @@ class Battle extends React.Component {
 	}
 }
 
-module.exports = Battle;
-
+export default Battle;
 
 

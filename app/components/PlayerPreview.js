@@ -1,15 +1,14 @@
-const React = require('react');
+import React from 'react';
 
-function PlayerPreview(props) {
+
+export default function PlayerPreview({ avatar, username, children}) {
 	return (
 		<div>
 			<div className='column'>
-				<img className='avatar' src={props.avatar} alt={'Avatar for ' + props.username} />
-				<h2 className='username'>@{props.username}</h2>
+				<img className='avatar' src={avatar} alt={'Avatar for ' + username} />
+				<h2 className='username'>@{username}</h2>
 			</div>
-			{props.children}
+			{children}
 		</div>
 	)
 }
-
-module.exports = PlayerPreview;
